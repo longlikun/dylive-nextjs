@@ -5,11 +5,11 @@ import ProductList from '../components/ProductList'
 import { ShopifyStore } from '../util/product'
 
 
-const ProductListPage = async() => {
+const ProductListPage = async () => {
 
     const query = `
     query producList {
-  products(first: 6) {
+  products(first: 8) {
     edges {
       node {
         id
@@ -37,10 +37,10 @@ const ProductListPage = async() => {
     `
 
 
-    const products=await ShopifyStore(query)
+    const products = await ShopifyStore(query)
     // console.log(products.body)
 
-    const productList=products.body
+    const productList = products.body
 
     return (
 
