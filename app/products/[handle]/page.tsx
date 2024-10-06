@@ -1,15 +1,14 @@
 "use client"
 import { ShopifyStore } from '@/app/util/product'
 import { IProductDetail } from '@/type/product'
-import { useParams } from 'next/navigation'
-import React, { useEffect,useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import React from 'react'
 
-const ProductDetailPage = () => {
-    const param=useParams()
-    const {handle}=param
-    const [productDetail, setProductDetail] = useState<IProductDetail>()
+const ProductDetailPage = ({params}:{params:{handle:string}}) => {
+    // const param=useParams()
+    // const {handle}=param
 
-    console.log('handle',handle)
+    console.log('handle',params)
 
 
     const query=`
@@ -49,22 +48,19 @@ const ProductDetailPage = () => {
 
 
 
+const {data:productDetail}=useQuery<IProductDetail>({
+    queryKey:['product-detail',params],
+    queryFn:async () => {
+       const res= await ShopifyStore(query,params)
+       if (res.status!=200){
+        throw new Error(res.error||"获取商品详情失败")
+       }
+       return res.body
+    }
+})
 
-useEffect(() => {
-    
-const fetchData= async()=>{
-    const res=await ShopifyStore(query,{handle})
+console.log("productData",productDetail)
 
-
-    const data=await res.body
-    console.log('res',data)
-    
-    setProductDetail(data)
-
-}
-fetchData()
-
-}, [query,handle])
 
 
 
@@ -72,7 +68,13 @@ fetchData()
     <section className="text-gray-600 body-font overflow-hidden">
     <div className="container px-5 py-24 mx-auto">
       <div className="lg:w-4/5 mx-auto flex flex-wrap">
-        <img alt="ecommerce" className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" src="https://dummyimage.com/400x400"/>
+      {productDetail?.data.product.images.edges.map((item)=>(
+    
+                <img alt="ecommerce" className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" src={item.node.url} key={item.node.url}/>
+ 
+
+      ))}
+    
         <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
           <h2 className="text-sm title-font text-gray-500 tracking-widest">{productDetail?.data.product.handle}</h2>
           <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">{productDetail?.data.product.handle}</h1>

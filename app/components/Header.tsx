@@ -2,7 +2,7 @@ import React from 'react'
 
 
 const navigation = [
-    { name: '产品', href: '#' },
+    { name: '产品', href: '/products' },
     { name: 'Features', href: '#' },
     { name: 'Marketplace', href: '#' },
     { name: 'Company', href: '#' },
